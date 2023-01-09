@@ -40,6 +40,10 @@ video {
 
 }
 
+.calculator__display span {
+    display: block;
+}
+
 .calculator__buttons {
     display: grid;
     gap: 0.5em;

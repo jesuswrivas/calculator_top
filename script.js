@@ -13,7 +13,11 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
-    return a / b
+    if (b === 0) {
+        return "error"
+    } else {
+        return a / b
+    }
 }
 
 function operate(operator, a, b) {
@@ -39,12 +43,11 @@ let operationTransform = { "+": "add", "-": "subtract", "x": "multiply", "/": "d
 
 
 
-//Populating the big display
+//Populating the big display. Push events for button numbers
 for (let buttonNumber of allButtonNumber) {
     buttonNumber.addEventListener("click", (e) => {
-        if (display.innerText === "0") {
+        if ((display.innerText === "0") || (display.innerText === "what u doin?")) {
             display.innerText = `${e.target.innerText}`
-
         } else {
             display.innerText += `${e.target.innerText}`
 
@@ -52,10 +55,10 @@ for (let buttonNumber of allButtonNumber) {
     })
 }
 
-//Populating the small display
+//Populating the small display. Push events for button numbers
 for (let buttonNumber of allButtonNumber) {
     buttonNumber.addEventListener("click", (e) => {
-        if (displaySmall.innerText === "0") {
+        if ((displaySmall.innerText === "0") || (displaySmall.innerText === "what u doin?")) {
             displaySmall.innerText = `${e.target.innerText}`
 
         } else {
@@ -65,7 +68,7 @@ for (let buttonNumber of allButtonNumber) {
     })
 }
 
-//Populatin the big display
+//Populatin the big display. Push events for operation buttons
 for (let buttonOperation of allButtonOperation) {
     buttonOperation.addEventListener("click", (e) => {
         displayOperation.push(`${display.innerText}`)
@@ -74,7 +77,7 @@ for (let buttonOperation of allButtonOperation) {
     })
 }
 
-//Populating the small display
+//Populating the small display. Push events for operation buttons
 
 for (let buttonOperation of allButtonOperation) {
     buttonOperation.addEventListener("click", (e) => {
@@ -83,21 +86,36 @@ for (let buttonOperation of allButtonOperation) {
 }
 
 
-
-
+//Result button
 
 let resultButton = document.querySelector(".calculator__buttons__result")
 resultButton.addEventListener("click", (e) => {
     let currentResult = 0
+    //The result button will push the last number currently on the screen into the displayOperation variable
     displayOperation.push(`${display.innerText}`)
     while (displayOperation.length > 2) {
         currentResult = operate(operationTransform[displayOperation[1]], +displayOperation[0], +displayOperation[2])
-        displayOperation.splice(0, 3)
-        displayOperation.unshift(currentResult)
+        //Error from division by 0
+        if (currentResult === "error") {
+            break
+        } else {
+            //This will operate every three elements on the displayOperation array until there is only one left (the result)
+            displayOperation.splice(0, 3)
+            displayOperation.unshift(currentResult)
+        }
     }
-    display.innerText = displayOperation[0]
-    displaySmall.innerText = displayOperation[0]
-    displayOperation = []
+
+    if (currentResult === "error") {
+        display.innerText = "what u doin?"
+        displaySmall.innerText = "what u doin?"
+        displayOperation = []
+    } else {
+        //if there is no error, the calculator will print the only element frm the displayOperation array (the result)
+        display.innerText = displayOperation[0]
+        displaySmall.innerText = displayOperation[0]
+        displayOperation = []
+    }
+
 })
 
 //Delete button
@@ -107,7 +125,6 @@ deleteButton.addEventListener("click", (e => {
     displaySmall.innerText = displaySmall.innerText.slice(0, -1)
 
 }))
-
 
 
 //Delete all button
